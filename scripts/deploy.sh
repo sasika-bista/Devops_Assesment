@@ -15,6 +15,7 @@ ssh -o StrictHostKeyChecking=accept-new -i key.pem \
   docker rm $CONTAINER 2>/dev/null || true
   docker run -d --name $CONTAINER \
     --restart always \
+    --env-file /home/ec2-user/.env \
     -p $PORT:$PORT \
     $FULL_NAME
 "
