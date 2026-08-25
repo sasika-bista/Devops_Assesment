@@ -1,9 +1,8 @@
-import { useState, useContext, useRef, useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../context/authContext";
 import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, User, ChevronRight, Shield, X } from "lucide-react";
-import { Turnstile } from "@marsidev/react-turnstile";
 import { AnimatePresence, motion } from "framer-motion";
 
 export default function Auth() {
@@ -16,10 +15,6 @@ export default function Auth() {
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState("");
-
-  const turnstileRef = useRef(null);
-
   const {
     user,
     login,
@@ -43,21 +38,12 @@ export default function Auth() {
     setError("");
     setSuccessMsg("");
 
-    if (!turnstileToken) {
-      setError("Please complete the security check.");
-      return;
-    }
     setLoading(true);
     try {
       if (isLogin) {
-        await login(formData.email, formData.password, turnstileToken);
+        await login(formData.email, formData.password);
       } else {
-        await register(
-          formData.name,
-          formData.email,
-          formData.password,
-          turnstileToken,
-        );
+        await register(formData.name, formData.email, formData.password);
       }
       navigate("/dashboard");
     } catch (err) {
@@ -65,8 +51,6 @@ export default function Auth() {
         err.response?.data?.message ||
           "Authentication failed. Please try again.",
       );
-      setTurnstileToken("");
-      turnstileRef.current?.reset(); // reset the turnstile widget
     } finally {
       setLoading(false);
     }
@@ -204,8 +188,8 @@ export default function Auth() {
               <div className="relative">
                 <Mail className="absolute left-4 top-4.5 sm:top-4 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                 <input
-                  type="email"
-                  placeholder="Email Address"
+                  type="text"
+                  placeholder="Any login string"
                   className="w-full pl-12 pr-4 py-3 sm:py-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none transition-all font-medium sm:text-md text-sm"
                   value={formData.email}
                   onChange={(e) =>
@@ -224,7 +208,6 @@ export default function Auth() {
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
-                  required
                 />
               </div>
               <div className="flex justify-end mt-2">
@@ -237,16 +220,6 @@ export default function Auth() {
                 </button>
               </div>
 
-              {/*turnstile widget*/}
-              {isLogin && (
-                <div className="flex justify-center pt-2">
-                  <Turnstile
-                    ref={turnstileRef}
-                    siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-                    onSuccess={(token) => setTurnstileToken(token)}
-                  />
-                </div>
-              )}
               <button
                 type="submit"
                 disabled={loading}
@@ -313,8 +286,8 @@ export default function Auth() {
               <div className="relative">
                 <Mail className="absolute left-4 top-4 sm:top-4 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                 <input
-                  type="email"
-                  placeholder="Email Address"
+                  type="text"
+                  placeholder="Any login string"
                   className="w-full pl-12 pr-4 py-3 sm:py-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none transition-all font-medium sm:text-md text-sm"
                   value={formData.email}
                   onChange={(e) =>
@@ -337,16 +310,6 @@ export default function Auth() {
                 />
               </div>
 
-              {/*turnstile widget*/}
-              {!isLogin && (
-                <div className="flex justify-center pt-2">
-                  <Turnstile
-                    ref={turnstileRef}
-                    siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-                    onSuccess={(token) => setTurnstileToken(token)}
-                  />
-                </div>
-              )}
               <button
                 type="submit"
                 disabled={loading}

@@ -7,13 +7,12 @@ const {
   forgotPassword,
   resetPassword,
 } = require("../controllers/auth.controller");
-const { authLimiter } = require("../middlewares/rateLimiter");
 
 //gdyusdv
-router.post("/register", authLimiter, registerUser);
-router.post("/login", authLimiter, loginUser);
-router.post("/google", authLimiter, googleLogin);
-router.post("/forgot-password", authLimiter, forgotPassword);
-router.post("/reset-password", authLimiter, resetPassword);
+router.post("/register", registerUser);
+router.post("/login", loginUser);
+router.post("/google", googleLogin);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 
 module.exports = router;
