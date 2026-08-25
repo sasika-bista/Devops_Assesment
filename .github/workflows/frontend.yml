@@ -25,7 +25,11 @@ jobs:
 
       - name: Build frontend
         working-directory: ./client
-        run: npm run build
+        env:
+          VITE_API_URL: http://107.20.254.218:5000/api
+        run: |
+          test -n "$VITE_API_URL"
+          npm run build
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
