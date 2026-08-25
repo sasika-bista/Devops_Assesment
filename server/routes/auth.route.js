@@ -9,7 +9,7 @@ const {
 } = require("../controllers/auth.controller");
 const { authLimiter } = require("../middlewares/rateLimiter");
 
-//comments
+//commentsds
 router.post("/register", authLimiter, registerUser);
 router.post("/login", authLimiter, loginUser);
 router.post("/google", authLimiter, googleLogin);
